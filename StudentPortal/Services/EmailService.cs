@@ -8,30 +8,36 @@ namespace StudentPortal.Services
 {
     public class EmailService
     {
-        private readonly string _Host;
-        private readonly int _Puerto;
+        private readonly string _host;
+        private readonly int _puerto;
 
-        private readonly string _NombreEnvia;
-        private readonly string _Correo;
-        private readonly string _Clave;
+        private readonly string _nombreEnvia;
+        private readonly string _correo;
+        private readonly string _clave;
         private readonly ILogger<EmailService> _logger;
 
         public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
         {
-            _Host = configuration["EmailSettings:Host"];
-            _Puerto = int.Parse(configuration["EmailSettings:Puerto"]);
+            _host = configuration["EmailSettings:Host"];
+            _puerto = int.Parse(configuration["EmailSettings:Puerto"]);
 
-            _NombreEnvia = configuration["EmailSettings:NombreEnvia"];
-            _Correo = configuration["EmailSettings:Correo"];
-            _Clave = configuration["EmailSettings:Clave"];
+            _nombreEnvia = configuration["EmailSettings:NombreEnvia"];
+            _correo = configuration["EmailSettings:Correo"];
+            _clave = configuration["EmailSettings:Clave"];
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Envía un correo electrónico utilizando los detalles proporcionados en `CorreoDto`.
+        /// </summary>
+        /// <param name="correoDto">DTO que contiene los detalles del correo como destinatario, asunto y contenido.</param>
+        /// <returns>Devuelve `true` si el correo se envía correctamente, de lo contrario `false`.</returns>
         public bool Enviar(CorreoDto correoDto) {
             try
             {
                 var email = new MimeMessage();
-                email.From.Add(new MailboxAddress(_NombreEnvia, _Correo));
+                email.From.Add(new MailboxAddress(_nombreEnvia, _correo));
                 email.To.Add(MailboxAddress.Parse(correoDto.Para));
                 email.Subject = correoDto.Asunto;
                 email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -40,8 +46,8 @@ namespace StudentPortal.Services
                 };
 
                 var smtp = new SmtpClient();
-                smtp.Connect(_Host,_Puerto, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_Correo,_Clave);
+                smtp.Connect(_host,_puerto, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_correo,_clave);
                 smtp.Send(email);
                 smtp.Disconnect(true);
 

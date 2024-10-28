@@ -1,3 +1,4 @@
+using StudentPortal.Data;
 using StudentPortal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddSingleton<UtilService>();
+builder.Services.AddScoped<DBUsuario>();
 
 var app = builder.Build();
 

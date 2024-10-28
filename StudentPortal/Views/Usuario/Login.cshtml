@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+<div class="row justify-content-center mt-5">
+    @* Form *@
+    <div class="col-5">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">Login</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Login" asp-controller="Usuario" method="post">
+                    <div class="form-group">
+                        <label for="correo">Correo electrónico</label>
+                        <input type="email" class="form-control" id="correo" name="correo" placeholder="Ingrese su correo" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="clave">Clave</label>
+                        <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su clave" required>
+                    </div>
+                    @* Alert *@
+                    @if (ViewBag.Mensage != null)
+                    {
+                        <div class="alert alert-warning my-2" role="alert">
+                            @ViewBag.Mensage
+                        </div>
+                    }
+                    <div class="mb-3 d-grid gap-2">
+                        <a class="btn btn-link" asp-action="Registrar" asp-controller="Usuario">¿No tienes una cuenta? Registrate</a>
+                        <a class="btn btn-link" asp-action="Restablecer" asp-controller="Usuario">¿Haz olvidado tu contraseña?</a>
+                        <button type="submit" class="btn btn-primary mt-4">Iniciar Sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
