@@ -32,7 +32,7 @@ namespace StudentPortal.Data{
                 using (SqlConnection connection = new SqlConnection(_CadenaSQL))
                 {
                     string query = "insert into usuarios(Nombre, Correo, Clave, Restablecer, Confirmado, Token)";
-                    query += "values(@nombre, @correo, @clave, @restablecer, @confirmado, @token)";
+                    query += " values(@nombre, @correo, @clave, @restablecer, @confirmado, @token)";
 
                     SqlCommand cmd = new SqlCommand(query, connection);
                     cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
@@ -40,6 +40,7 @@ namespace StudentPortal.Data{
                     cmd.Parameters.AddWithValue("@clave", usuario.Clave);
                     cmd.Parameters.AddWithValue("@restablecer", usuario.Restablecer);
                     cmd.Parameters.AddWithValue("@confirmado", usuario.Confirmado);
+                    cmd.Parameters.AddWithValue("@token", usuario.Token);
                     cmd.CommandType = System.Data.CommandType.Text;
 
                     connection.Open();
@@ -118,7 +119,7 @@ namespace StudentPortal.Data{
                 using (SqlConnection connection = new SqlConnection(_CadenaSQL))
                 {
                     string query = "select Nombre, Clave, Restablecer, Confirmado, Token from usuarios";
-                    query += "where Correo= @correo";
+                    query += " where Correo=@correo";
 
                     SqlCommand cmd = new SqlCommand(query, connection);
                     cmd.Parameters.AddWithValue("@correo", correo);
@@ -165,7 +166,7 @@ namespace StudentPortal.Data{
 
             try {
                 using (SqlConnection connection = new SqlConnection(_CadenaSQL)) {
-                    string query = @"update usuarios set Restablecer = @restablecer, Clave = @clave where Token = @token";
+                    string query = @"update usuarios set Restablecer=@restablecer, Clave=@clave where Token=@token";
 
                     SqlCommand cmd = new SqlCommand(query, connection);
                     cmd.Parameters.AddWithValue("@restablecer",restablecer);

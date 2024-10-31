@@ -20,16 +20,16 @@
                         <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su clave" required>
                     </div>
                     @* Alert *@
-                    @if (ViewBag.Mensage != null)
+                    @if (ViewBag.Mensaje != null)
                     {
                         <div class="alert alert-warning my-2" role="alert">
-                            @ViewBag.Mensage
+                            @ViewBag.Mensaje
                         </div>
                     }
                     <div class="mb-3 d-grid gap-2">
+                        <button type="submit" class="btn btn-primary mt-4">Iniciar Sesión</button>
                         <a class="btn btn-link" asp-action="Registrar" asp-controller="Usuario">¿No tienes una cuenta? Registrate</a>
                         <a class="btn btn-link" asp-action="Restablecer" asp-controller="Usuario">¿Haz olvidado tu contraseña?</a>
-                        <button type="submit" class="btn btn-primary mt-4">Iniciar Sesión</button>
                     </div>
                 </form>
             </div>

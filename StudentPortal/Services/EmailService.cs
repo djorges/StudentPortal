@@ -20,10 +20,11 @@ namespace StudentPortal.Services
         {
             _host = configuration["EmailSettings:Host"];
             _puerto = int.Parse(configuration["EmailSettings:Puerto"]);
-
             _nombreEnvia = configuration["EmailSettings:NombreEnvia"];
-            _correo = configuration["EmailSettings:Correo"];
-            _clave = configuration["EmailSettings:Clave"];
+
+            //Secret Settings
+            _correo = configuration["EmailSecretSettings:Correo"];
+            _clave = configuration["EmailSecretSettings:Clave"];
             _logger = logger;
         }
 
@@ -34,20 +35,21 @@ namespace StudentPortal.Services
         /// <param name="correoDto">DTO que contiene los detalles del correo como destinatario, asunto y contenido.</param>
         /// <returns>Devuelve `true` si el correo se envía correctamente, de lo contrario `false`.</returns>
         public bool Enviar(CorreoDto correoDto) {
+
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress(_nombreEnvia, _correo));
+            email.To.Add(MailboxAddress.Parse(correoDto.Para));
+            email.Subject = correoDto.Asunto;
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                Text = correoDto.Contenido,
+            };
+
             try
             {
-                var email = new MimeMessage();
-                email.From.Add(new MailboxAddress(_nombreEnvia, _correo));
-                email.To.Add(MailboxAddress.Parse(correoDto.Para));
-                email.Subject = correoDto.Asunto;
-                email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
-                {
-                    Text = correoDto.Contenido,
-                };
-
-                var smtp = new SmtpClient();
-                smtp.Connect(_host,_puerto, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_correo,_clave);
+                using var smtp = new SmtpClient();
+                smtp.Connect(_host, _puerto, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_correo, _clave);
                 smtp.Send(email);
                 smtp.Disconnect(true);
 

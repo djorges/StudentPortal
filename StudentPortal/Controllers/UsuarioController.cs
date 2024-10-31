@@ -13,12 +13,14 @@ namespace StudentPortal.Controllers
         private readonly DBUsuario _dbUsuario;
         private readonly UtilService _utilService;
         private readonly EmailService _emailService;
+        private readonly IWebHostEnvironment _env;
 
-        public UsuarioController(DBUsuario dbUsuario, UtilService utilService, EmailService emailService)
+        public UsuarioController(DBUsuario dbUsuario, UtilService utilService, EmailService emailService, IWebHostEnvironment env)
         {
             _dbUsuario = dbUsuario;
             _utilService = utilService;
             _emailService = emailService;
+            _env = env;
         }
 
         [HttpGet]
@@ -34,18 +36,18 @@ namespace StudentPortal.Controllers
             {
                 if (!usuario.Confirmado)
                 {
-                    ViewBag.Mensage = $"Falta confirmar su cuenta. Se le envio un correo a {correo}";
+                    ViewBag.Mensaje = $"Falta confirmar su cuenta. Se le envio un correo a {correo}";
                 }
                 else if (!usuario.Restablecer)
                 {
-                    ViewBag.Mensage = $"Se ha solicitado restablecer su cuenta, por favor revise su bandeja del correo {correo}";
+                    ViewBag.Mensaje = $"Se ha solicitado restablecer su cuenta, por favor revise su bandeja del correo {correo}";
                 }
                 else {
                     return RedirectToAction("Index", "Home");
                 }
             }
             else {
-                ViewBag.Mensage = "No se encontraron coincidencias";
+                ViewBag.Mensaje = "No se encontraron coincidencias";
             }
 
             return View();
@@ -63,7 +65,7 @@ namespace StudentPortal.Controllers
                 //TODO: Use Validation
                 ViewBag.Nombre = usuario.Nombre;
                 ViewBag.Correo = usuario.Correo;
-                ViewBag.Message = "Las contraseñas no coinciden";
+                ViewBag.Mensaje = "Las contraseñas no coinciden";
 
                 return View();
             }
@@ -76,7 +78,7 @@ namespace StudentPortal.Controllers
 
                 //Confirmar cuenta
                 if (_dbUsuario.Registrar(usuario)){
-                    string rutaArchivoHtml = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template", "Confirmar.html");
+                    string rutaArchivoHtml = Path.Combine(_env.ContentRootPath, "Template", "Confirmar.html");
                     string contenido = await System.IO.File.ReadAllTextAsync(rutaArchivoHtml);
                     
                     //Generar url
