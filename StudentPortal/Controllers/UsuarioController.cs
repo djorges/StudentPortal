@@ -38,7 +38,7 @@ namespace StudentPortal.Controllers
                 {
                     ViewBag.Mensaje = $"Falta confirmar su cuenta. Se le envio un correo a {correo}";
                 }
-                else if (!usuario.Restablecer)
+                else if (usuario.Restablecer)
                 {
                     ViewBag.Mensaje = $"Se ha solicitado restablecer su cuenta, por favor revise su bandeja del correo {correo}";
                 }
@@ -60,7 +60,7 @@ namespace StudentPortal.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Registrar(UsuarioDto usuario) {
+        public async Task<ViewResult> Registrar(UsuarioDto usuario) {
             if (usuario.Clave != usuario.ConfirmarClave) {
                 //TODO: Use Validation
                 ViewBag.Nombre = usuario.Nombre;
@@ -84,14 +84,14 @@ namespace StudentPortal.Controllers
                     //Generar url
                     string baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}/Usuario/Confirmar?token={usuario.Token}";
 
-                    _emailService.Enviar(
-                        new CorreoDto()
-                        {
-                            Para = usuario.Correo,
-                            Asunto = "Correo de Confirmación",
-                            Contenido = string.Format(contenido, usuario.Nombre, baseUrl)
-                        }
-                    );
+
+                    CorreoDto correoDto = new CorreoDto()
+                    {
+                        Para = usuario.Correo,
+                        Asunto = "Correo de Confirmación",
+                        Contenido = string.Format(contenido, usuario.Nombre, baseUrl)
+                    };
+                    bool enviado = _emailService.Enviar(correoDto);
 
                     ViewBag.Creado = true;
                     ViewBag.Mensaje = $"Su cuenta ha sido creada. Hemos enviado un mensaje al correo {usuario.Correo} para confirmar su cuenta";
@@ -100,6 +100,81 @@ namespace StudentPortal.Controllers
                 }
             }else{
                 ViewBag.Mensaje = "El correo ya se encuentra registrado";
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public ViewResult Confirmar(string token) {
+            ViewBag.Respuesta = _dbUsuario.Confirmar(token);
+            return View();
+        }
+
+        [HttpGet]
+        public ViewResult Restablecer() { 
+            return View(); 
+        }
+
+        [HttpPost]
+        public async Task<ViewResult> Restablecer(string correo) {
+            UsuarioDto? usuario = _dbUsuario.Obtener(correo);
+            ViewBag.Correo = correo;
+            if (usuario != null) {
+                bool respuesta = _dbUsuario.RestablecerActualizar(1, usuario.Clave, usuario.Token);
+
+                if (respuesta)
+                {
+                    string rutaArchivoHtml = Path.Combine(_env.ContentRootPath, "Template", "Restablecer.html");
+                    string contenido = await System.IO.File.ReadAllTextAsync(rutaArchivoHtml);
+
+                    //Generar url
+                    string baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}/Usuario/Actualizar?token={usuario.Token}";
+
+                    CorreoDto correoDto = new CorreoDto()
+                    {
+                        Para = correo,
+                        Asunto = "Restablecer Contraseña",
+                        Contenido = string.Format(contenido, usuario.Nombre, baseUrl)
+                    };
+                    bool enviado = _emailService.Enviar(correoDto);
+
+                    ViewBag.Restablecido = true;
+                    ViewBag.Mensaje = "Su contraseña fue restablecida, le enviamos un mensaje a su correo para restablecer.";
+                }
+                else {
+                    ViewBag.Mensaje = "No se pudo restablecer la cuenta";
+                }
+            }
+            else {
+                ViewBag.Mensaje = "No se encontraron coincidencias con el correo";
+            }
+            return View(); 
+        }
+
+        [HttpGet]
+        public ViewResult Actualizar(string token) {
+            ViewBag.Token = token;
+
+            return View();
+        }
+
+        [HttpPost]
+        public ViewResult Actualizar(string token, string clave, string confirmarClave) {
+            ViewBag.Token = token;
+            if (clave != confirmarClave) {
+                ViewBag.Mensaje = "Las contraseñas no coinciden";
+
+                return View();
+            }
+            
+            bool respuesta = _dbUsuario.RestablecerActualizar(0, _utilService.ConvertirSHA256(clave), token);
+            if (respuesta)
+            {
+                ViewBag.Restablecido = true;
+            }
+            else {
+                ViewBag.Mensaje = "No se pudo actualizar";
             }
 
             return View();

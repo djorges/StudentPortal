@@ -17,7 +17,7 @@ namespace StudentPortal.Data{
 
         public DBUsuario(IConfiguration configuration, ILogger<EmailService> logger)
         {
-            _CadenaSQL = configuration.GetConnectionString("DefaultConnection");
+            _CadenaSQL = configuration.GetConnectionString("LocalDBConnection");
             _logger = logger;
         }
         /// <summary>

@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Confirmar";
+}
+<div class="container">
+    @if ((bool)ViewBag.Respuesta)
+    {
+        <div class="alert alert-success w-50 mx-auto">
+            <p>
+                <b>Listo!</b>&nbsp; 
+                Su cuenta fue confirmada. Ahora puede acceder
+            </p>
+            <p class="text-center">
+                <a class="btn btn-success ms-2" asp-action="Login" asp-controller="Usuario">Ingresar</a>
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger w-50 mx-auto">
+            <p>No se pudo confirmar el correo.</p>
+        </div>
+    }
+</div>

@@ -5,6 +5,9 @@
         public int IdUsuario { get; set; }
         public string Nombre { get; set; }
         public string Correo { get; set; }
+        public int Edad { get; set; }
+        public Genero Genero { get; set; }
+
         public string Clave { get; set; }
         public string ConfirmarClave { get; set; }
         public bool Restablecer { get; set; }
