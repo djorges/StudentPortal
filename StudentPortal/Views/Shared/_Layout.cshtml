@@ -1,49 +1,122 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    string currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - StudentPortal</title>
+    <link rel="icon" type="image/x-icon" href="~/images/StudentPortalLogo.png">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StudentPortal.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        @* Navbar *@
+        <nav class="navbar navbar-expand-sm bg-success navbar-toggleable-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">StudentPortal</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/StudentPortalLogo.png" alt="Logo" width="40" height="40"
+                         class="d-inline-block align-text-top rounded-circle">
+                </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "text-white" : "text-white-50")"
+                               asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white-50" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            asp-area="" asp-controller="Home" asp-action="About">Nosotros</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Sedes</a></li>
+                                <li><a class="dropdown-item" href="#">Historia</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Contacto</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link @(currentController == "Home" && currentAction == "Help" ? "text-white" : "text-white-50")"
+                               asp-area="" asp-controller="Home" asp-action="Help">Ayuda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Home" && currentAction == "Faq" ? "text-white" : "text-white-50")" 
+                                asp-area="" asp-controller="Home" asp-action="Faq">
+                                FAQ
+                            </a>
                         </li>
                     </ul>
+                    <form id="form-search-global" class="d-flex" role="search" method="post" asp-action="" asp-controller="">
+                        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+                    </form>
+                    <a class="btn btn-outline-light" asp-action="Login" asp-controller="Usuario">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                        </svg>
+                        Ingresar
+                    </a>
+                    @*<a class="btn btn-danger" asp-action="Logout" asp-controller="Usuario">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                        </svg>
+                        Salir
+                    </a>*@
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - StudentPortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    @*Main Content*@
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    @* Footer *@
+    <footer class="border-top footer text-white-50 bg-dark">
+        <div class="container p-3">
+            @*<div class="row">
+                <div class="col-4">
+                    <h4>Sobre Nosotros</h4>
+                    <p></p>
+                </div>
+                <div class="col-4">
+                    <h4>Contacto</h4>
+                    <p>Avenida Corrientes 123, Buenos Aires, Argentina</p>
+                    <p>Email: contacto@studentportal.com</p>
+                    <p>Teléfono: +123 456 7890</p>
+                </div>
+                <div class="col-4">
+                    <h4>Siguenos</h4>
+                    <p></p>
+                </div>
+            </div>*@
+            <div class="text-center">
+                Copyright &copy; 2024 - StudentPortal
+            </div>
         </div>
     </footer>
+
+    @* JS Scripts *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

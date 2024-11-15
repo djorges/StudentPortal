@@ -13,6 +13,11 @@ namespace StudentPortal.Data
 
         public DbSet<Empleado> Empleados { get; set; }
         public DbSet<Perfil> Perfiles { get; set; }
+        public DbSet<Estudiante> Estudiantes { get; set; }
+        public DbSet<Profesor> Profesores { get; set; }
+        public DbSet<Curso> Cursos { get; set; }
+        public DbSet<CursoEstudiante> CursoEstudiantes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +41,24 @@ namespace StudentPortal.Data
                 tb.HasOne(col => col.Perfil).WithMany(p => p.Empleados).HasForeignKey(col => col.IdPerfil);
                 tb.ToTable("empleados");
             });
+
+            modelBuilder.Entity<CursoEstudiante>()
+                .HasKey(ce => new { ce.EstudianteId, ce.CursoId });
+
+            modelBuilder.Entity<CursoEstudiante>()
+                .HasOne(ce => ce.Estudiante)
+                .WithMany(e => e.CursosEstudiantes)
+                .HasForeignKey(ce => ce.EstudianteId);
+
+            modelBuilder.Entity<CursoEstudiante>()
+                .HasOne(ce => ce.Curso)
+                .WithMany(c => c.CursosEstudiantes)
+                .HasForeignKey(ce => ce.CursoId);
+
+            modelBuilder.Entity<Curso>()
+                .HasOne(c => c.Profesor)
+                .WithMany(p => p.Cursos)
+                .HasForeignKey(c => c.ProfesorId);
         }
     }
 }

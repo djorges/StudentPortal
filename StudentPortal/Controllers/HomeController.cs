@@ -15,7 +15,16 @@ namespace StudentPortal.Controllers
 
         public IActionResult Index()
         {
-            HashSet<Object> e = new HashSet<Object>();
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Help()
+        {
             return View();
         }
 
