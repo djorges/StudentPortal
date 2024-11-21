@@ -25,7 +25,7 @@ namespace StudentPortal.Data{
         /// </summary>
         /// <param name="usuario">Objeto `UsuarioDto` que contiene la información del usuario a registrar.</param>
         /// <returns>Devuelve `true` si el usuario fue registrado exitosamente; de lo contrario, `false`.</returns>
-        public bool Registrar(UsuarioDto usuario) { 
+        public bool Registrar(EstudianteDto usuario) { 
             bool respuesta = false;
 
             try{
@@ -67,8 +67,8 @@ namespace StudentPortal.Data{
         /// <param name="correo">El correo electrónico del usuario.</param>
         /// <param name="clave">La clave del usuario.</param>
         /// <returns>Un objeto `UsuarioDto` con los datos del usuario si las credenciales son válidas; de lo contrario, `null`.</returns>
-        public UsuarioDto? Validar(string correo, string clave) {
-            UsuarioDto? usuario = null;
+        public EstudianteDto? Validar(string correo, string clave) {
+            EstudianteDto? usuario = null;
 
             try {
                 using (SqlConnection connection = new SqlConnection(_CadenaSQL)) {
@@ -84,7 +84,7 @@ namespace StudentPortal.Data{
 
                     using (SqlDataReader reader = cmd.ExecuteReader()) {
                         if (reader.Read()) {
-                            usuario = new UsuarioDto(){
+                            usuario = new EstudianteDto(){
                                 Nombre = reader["Nombre"].ToString(),
                                 Restablecer = (bool)reader["Restablecer"],
                                 Confirmado = (bool)reader["Confirmado"]
@@ -110,9 +110,9 @@ namespace StudentPortal.Data{
         /// </summary>
         /// <param name="correo">El correo electrónico del usuario.</param>
         /// <returns>Un objeto `UsuarioDto` con los datos del usuario si se encuentra; de lo contrario, `null`.</returns>
-        public UsuarioDto? Obtener(string correo)
+        public EstudianteDto? Obtener(string correo)
         {
-            UsuarioDto? usuario = null;
+            EstudianteDto? usuario = null;
 
             try
             {
@@ -129,7 +129,7 @@ namespace StudentPortal.Data{
 
                     using (SqlDataReader reader = cmd.ExecuteReader()) {
                         if (reader.Read()) {
-                            usuario = new UsuarioDto()
+                            usuario = new EstudianteDto()
                             {
                                 Nombre = reader["Nombre"].ToString(),
                                 Clave = reader["Clave"].ToString(),

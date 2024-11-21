@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentPortal.Data;
 
@@ -10,9 +11,11 @@ using StudentPortal.Data;
 namespace StudentPortal.Migrations
 {
     [DbContext(typeof(DBMain))]
-    partial class DBMainModelSnapshot : ModelSnapshot
+    [Migration("20241119213601_InsertCursosData")]
+    partial class InsertCursosData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,61 +196,6 @@ namespace StudentPortal.Migrations
                     b.HasIndex("IdPerfil");
 
                     b.ToTable("empleados", (string)null);
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.Estudiante", b =>
-                {
-                    b.Property<int>("EstudianteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Clave")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("Confirmado")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ConfirmarClave")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Correo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Edad")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Genero")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("Restablecer")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("EstudianteId");
-
-                    b.ToTable("estudiantes", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>

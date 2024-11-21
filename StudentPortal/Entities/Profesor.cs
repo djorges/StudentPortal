@@ -15,6 +15,10 @@ namespace StudentPortal.Entities
         public bool Activo { get; set; }
         public string imageUrl { get; set; }
 
+        public string Trayectoria { get; set; }
+        public float PorcentajeAlumnosAprobados { get; set; }
+        public int PuntuacionEncuestas { get; set; }
+
         public List<Curso> Cursos { get; set; } = new List<Curso>();
     }
 }

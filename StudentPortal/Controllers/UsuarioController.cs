@@ -30,7 +30,7 @@ namespace StudentPortal.Controllers
 
         [HttpPost]
         public ActionResult Login(string correo, string clave) {
-            UsuarioDto? usuario = _dbUsuario.Validar(correo, _utilService.ConvertirSHA256(clave));
+            EstudianteDto? usuario = _dbUsuario.Validar(correo, _utilService.ConvertirSHA256(clave));
 
             if (usuario != null)
             {
@@ -60,7 +60,7 @@ namespace StudentPortal.Controllers
         }
 
         [HttpPost]
-        public async Task<ViewResult> Registrar(UsuarioDto usuario) {
+        public async Task<ViewResult> Registrar(EstudianteDto usuario) {
             if (usuario.Clave != usuario.ConfirmarClave) {
                 //TODO: Use Validation
                 ViewBag.Nombre = usuario.Nombre;
@@ -118,7 +118,7 @@ namespace StudentPortal.Controllers
 
         [HttpPost]
         public async Task<ViewResult> Restablecer(string correo) {
-            UsuarioDto? usuario = _dbUsuario.Obtener(correo);
+            EstudianteDto? usuario = _dbUsuario.Obtener(correo);
             ViewBag.Correo = correo;
             if (usuario != null) {
                 bool respuesta = _dbUsuario.RestablecerActualizar(1, usuario.Clave, usuario.Token);

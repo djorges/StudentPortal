@@ -11,8 +11,8 @@ using StudentPortal.Data;
 namespace StudentPortal.Migrations
 {
     [DbContext(typeof(DBMain))]
-    [Migration("20241107215201_CreateTableRelations")]
-    partial class CreateTableRelations
+    [Migration("20241118034852_CreateCursosTable")]
+    partial class CreateCursosTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,10 +22,36 @@ namespace StudentPortal.Migrations
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("StudentPortal.Entities.Calificacion", b =>
+                {
+                    b.Property<int>("CalificacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Puntuacion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalVotos")
+                        .HasColumnType("int");
+
+                    b.HasKey("CalificacionId");
+
+                    b.ToTable("calificaciones", (string)null);
+                });
+
             modelBuilder.Entity("StudentPortal.Entities.Curso", b =>
                 {
                     b.Property<int>("CursoId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Aula")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CalificacionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CantInscriptos")
                         .HasColumnType("int");
 
                     b.Property<string>("Codigo")
@@ -35,45 +61,41 @@ namespace StudentPortal.Migrations
                     b.Property<int>("Creditos")
                         .HasColumnType("int");
 
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Duracion")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("EsObligatorio")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime>("FechaFin")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Horarios")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("ProfesorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Sede")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("CursoId");
+
+                    b.HasIndex("CalificacionId")
+                        .IsUnique();
 
                     b.HasIndex("ProfesorId");
 
-                    b.ToTable("Cursos");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.CursoEstudiante", b =>
-                {
-                    b.Property<int>("EstudianteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CursoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaInscripcion")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("EstudianteId", "CursoId");
-
-                    b.HasIndex("CursoId");
-
-                    b.ToTable("CursoEstudiantes");
+                    b.ToTable("cursos", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Empleado", b =>
@@ -98,41 +120,6 @@ namespace StudentPortal.Migrations
                     b.HasIndex("IdPerfil");
 
                     b.ToTable("empleados", (string)null);
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.Estudiante", b =>
-                {
-                    b.Property<int>("EstudianteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("FechaInscripcion")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("Genero")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("EstudianteId");
-
-                    b.ToTable("Estudiantes");
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>
@@ -211,39 +198,32 @@ namespace StudentPortal.Migrations
                     b.Property<float>("Salario")
                         .HasColumnType("float");
 
+                    b.Property<string>("imageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("ProfesorId");
 
-                    b.ToTable("Profesores");
+                    b.ToTable("profesores", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Curso", b =>
                 {
+                    b.HasOne("StudentPortal.Entities.Calificacion", "Calificacion")
+                        .WithOne("Curso")
+                        .HasForeignKey("StudentPortal.Entities.Curso", "CalificacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudentPortal.Entities.Profesor", "Profesor")
                         .WithMany("Cursos")
                         .HasForeignKey("ProfesorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Calificacion");
+
                     b.Navigation("Profesor");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.CursoEstudiante", b =>
-                {
-                    b.HasOne("StudentPortal.Entities.Curso", "Curso")
-                        .WithMany("CursosEstudiantes")
-                        .HasForeignKey("CursoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentPortal.Entities.Estudiante", "Estudiante")
-                        .WithMany("CursosEstudiantes")
-                        .HasForeignKey("EstudianteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Curso");
-
-                    b.Navigation("Estudiante");
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Empleado", b =>
@@ -257,14 +237,10 @@ namespace StudentPortal.Migrations
                     b.Navigation("Perfil");
                 });
 
-            modelBuilder.Entity("StudentPortal.Entities.Curso", b =>
+            modelBuilder.Entity("StudentPortal.Entities.Calificacion", b =>
                 {
-                    b.Navigation("CursosEstudiantes");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.Estudiante", b =>
-                {
-                    b.Navigation("CursosEstudiantes");
+                    b.Navigation("Curso")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>

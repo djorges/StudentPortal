@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentPortal.Models;
+using StudentPortal.Services;
 using System.Diagnostics;
 
 namespace StudentPortal.Controllers
@@ -7,14 +8,21 @@ namespace StudentPortal.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ProfesorService _profesorService;
+        private readonly CursoService _cursoService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ProfesorService profesorService, CursoService cursoService)
         {
             _logger = logger;
+            _profesorService = profesorService;
+            _cursoService = cursoService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewData["TopProfesores"] = await _profesorService.GetTopRated();
+            ViewData["TopCursos"] = await _cursoService.GetTopRated();
+
             return View();
         }
 

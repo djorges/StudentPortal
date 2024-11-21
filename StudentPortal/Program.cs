@@ -16,6 +16,9 @@ builder.Services.AddSingleton<EmailService>();
 builder.Services.AddSingleton<UtilService>();
 builder.Services.AddScoped<EmpleadoService>();
 builder.Services.AddScoped<PerfilService>();
+
+builder.Services.AddScoped<CursoService>();
+builder.Services.AddScoped<ProfesorService>();
 builder.Services.AddScoped<DBUsuario>();
 builder.Services.AddDbContext<DBMain>(options =>
     options.UseMySQL(connectionString)

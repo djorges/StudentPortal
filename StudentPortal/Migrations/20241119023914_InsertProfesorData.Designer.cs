@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentPortal.Data;
 
@@ -10,9 +11,11 @@ using StudentPortal.Data;
 namespace StudentPortal.Migrations
 {
     [DbContext(typeof(DBMain))]
-    partial class DBMainModelSnapshot : ModelSnapshot
+    [Migration("20241119023914_InsertProfesorData")]
+    partial class InsertProfesorData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,8 +28,8 @@ namespace StudentPortal.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<float>("Puntuacion")
-                        .HasColumnType("float");
+                    b.Property<int>("Puntuacion")
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalVotos")
                         .HasColumnType("int");
@@ -34,26 +37,6 @@ namespace StudentPortal.Migrations
                     b.HasKey("CalificacionId");
 
                     b.ToTable("calificaciones", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            CalificacionId = 1,
-                            Puntuacion = 4.5f,
-                            TotalVotos = 1045
-                        },
-                        new
-                        {
-                            CalificacionId = 2,
-                            Puntuacion = 4f,
-                            TotalVotos = 909
-                        },
-                        new
-                        {
-                            CalificacionId = 3,
-                            Puntuacion = 3.9f,
-                            TotalVotos = 894
-                        });
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Curso", b =>
@@ -116,59 +99,6 @@ namespace StudentPortal.Migrations
                     b.HasIndex("ProfesorId");
 
                     b.ToTable("cursos", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            CursoId = 1,
-                            Aula = 505,
-                            CalificacionId = 1,
-                            CantInscriptos = 30,
-                            Codigo = "Cod: 8001",
-                            Creditos = 8,
-                            Descripcion = "Introduce a los estudiantes a los fundamentos del diseño y análisis de algoritmos. Se enfoca en desarrollar habilidades para resolver problemas mediante la creación de soluciones computacionales eficientes. A lo largo del curso, se exploran conceptos básicos como..",
-                            Duracion = "Cuatrimestral",
-                            EsObligatorio = true,
-                            Horarios = "Martes y Jueves, 16:00-20:00",
-                            MaxInscriptos = 30,
-                            Nombre = "Algoritmos Computacionales I",
-                            ProfesorId = 1,
-                            Sede = "Flores"
-                        },
-                        new
-                        {
-                            CursoId = 2,
-                            Aula = 109,
-                            CalificacionId = 2,
-                            CantInscriptos = 19,
-                            Codigo = "Cod: 8085",
-                            Creditos = 8,
-                            Descripcion = "Introduce a los estudiantes a los conceptos fundamentales del cálculo diferencial e integral, estableciendo las bases para el estudio riguroso de funciones de una variable real. Los temas principales incluyen el análisis de límites y continuidad, derivación ...",
-                            Duracion = "Cuatrimestral",
-                            EsObligatorio = true,
-                            Horarios = "Lunes y Miercoles, 10:00-14:00",
-                            MaxInscriptos = 30,
-                            Nombre = "Análisis Matemático I",
-                            ProfesorId = 1,
-                            Sede = "Palermo"
-                        },
-                        new
-                        {
-                            CursoId = 3,
-                            Aula = 405,
-                            CalificacionId = 3,
-                            CantInscriptos = 8,
-                            Codigo = "Cod: 6012",
-                            Creditos = 6,
-                            Descripcion = "Profundiza en los conceptos de la química general y se enfoca en el estudio de fenómenos químicos a nivel molecular y macroscópico. Los temas incluyen la termodinámica química, equilibrio químico, cinética de las reacciones, electroquímica y propiedades de los gases, líquidos y sólidos.",
-                            Duracion = "Cuatrimestral",
-                            EsObligatorio = false,
-                            Horarios = "Miércoles y Sábados, 7:00-10:00",
-                            MaxInscriptos = 30,
-                            Nombre = "Química II",
-                            ProfesorId = 2,
-                            Sede = "Puerto Madero"
-                        });
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Empleado", b =>
@@ -193,61 +123,6 @@ namespace StudentPortal.Migrations
                     b.HasIndex("IdPerfil");
 
                     b.ToTable("empleados", (string)null);
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.Estudiante", b =>
-                {
-                    b.Property<int>("EstudianteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Clave")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("Confirmado")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ConfirmarClave")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Correo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Edad")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Genero")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("Restablecer")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("EstudianteId");
-
-                    b.ToTable("estudiantes", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>

@@ -1,8 +1,8 @@
 ﻿namespace StudentPortal.Models
 {
-    public class UsuarioDto
+    public class EstudianteDto
     {
-        public int IdUsuario { get; set; }
+        public int EstudianteId { get; set; }
         public string Nombre { get; set; }
         public string Correo { get; set; }
         public int Edad { get; set; }
