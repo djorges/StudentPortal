@@ -21,7 +21,6 @@ namespace StudentPortal.Data
         public DbSet<Estudiante> Estudiantes { get; set; }
         //public DbSet<CursoEstudiante> CursoEstudiantes { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Perfil>( tb => {
@@ -51,8 +50,11 @@ namespace StudentPortal.Data
                 tb.Property(col => col.EstudianteId).ValueGeneratedOnAdd();
                 tb.Property(col => col.Nombre).IsRequired().HasMaxLength(50);
                 tb.Property(col => col.Genero).HasConversion<string>();
+                tb.Property(col => col.Nacionalidad).HasConversion<string>();
+                tb.Property(col => col.PrivacidadCorreo).HasConversion<string>();
                 tb.ToTable("estudiantes");
             });
+
             /*modelBuilder.Entity<CursoEstudiante>()
                 .HasKey(ce => new { ce.EstudianteId, ce.CursoId });
 
@@ -215,13 +217,6 @@ namespace StudentPortal.Data
                 );
                 tb.ToTable("cursos");
             });
-
-            /*modelBuilder.Entity<Estudiante>(tb =>
-            {
-                tb.HasKey(e => e.EstudianteId);
-                tb.Property(p => p.EstudianteId).ValueGeneratedOnAdd();
-                tb.ToTable("estudiantes");
-            });*/
         }
     }
 }

@@ -1,0 +1,149 @@
+﻿@using StudentPortal.Models
+@model EstudianteDto
+@{
+    ViewData["Title"] = "Mis Datos";
+}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-3">
+            @await Html.PartialAsync("_MenuPartialView")
+        </div>
+        <div class="col-9 p-3">
+            <div class="row align-items-center mb-2">
+                <h3>Mis Datos</h3>
+            </div>
+            <form asp-action="Perfil" asp-controller="Estudiante" method="post" enctype="multipart/form-data">
+                <input name="id" value="@ViewBag.Id" hidden />
+                @*Image*@
+                <div class="text-center">
+                    <div class="position-relative d-inline-block">
+                        @if (Model.FotoPerfilBytes != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.FotoPerfilBytes)" alt="Logo" width="200" height="200" class="rounded-circle">
+                        }else{
+                            <img src="~/images/default_estudiante.jpg" alt="Logo" width="200" height="200" class="rounded-circle">
+                        }
+                        <label class="btn btn-primary position-absolute rounded-circle" style="bottom: 10px; right: 10px;">
+                            <input type="file" name="FotoPerfil" class="d-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus mb-1" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                            </svg>
+                        </label>
+                    </div>
+                </div>
+                @**@
+                <div class="row mb-2">
+                    <div class="form-group col-4">
+                        <label asp-for="Username">Username:</label>
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">@@</span>
+                            <input asp-for="Username" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Nombre">Nombre:</label>
+                        <input asp-for="Nombre" class="form-control" readonly />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Apellido">Apellido:</label>
+                        <input asp-for="Apellido" class="form-control" readonly />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                </div> 
+                <div class="row mb-2">
+                    <div class="form-group col-4">
+                        <label asp-for="FechaNacimiento">Fecha de Nacimiento:</label>
+                        <input asp-for="FechaNacimiento" class="form-control" readonly />
+                        <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Dni">DNI:</label>
+                        <input asp-for="Dni" ty class="form-control" readonly/>
+                        <span asp-validation-for="Dni" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Nacionalidad">Seleccione su nacionalidad:</label>
+                        <select asp-for="Nacionalidad" class="form-select">
+                            <option value="">Seleccione un país</option>
+                            <option value="0">Argentina</option>
+                            <option value="1">Estados Unidos</option>
+                            <option value="2">Bolivia</option>
+                            <option value="3">Brasil</option>
+                            <option value="4">Canadá</option>
+                            <option value="5">Chile</option>
+                            <option value="6">Colombia</option>
+                            <option value="7">Ecuador</option>
+                            <option value="8">Paraguay</option>
+                            <option value="9">Perú</option>
+                            <option value="10">Uruguay</option>
+                            <option value="11">Venezuela</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="form-group col-4">
+                        <label asp-for="Telefono">Teléfono:</label>
+                        <input asp-for="Telefono" class="form-control" type="tel" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-8">
+                        <label asp-for="Correo">Correo:</label>
+                        <input asp-for="Correo" class="form-control" type="email" />
+                        <span asp-validation-for="Correo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="form-group col-4">
+                        <label asp-for="Domicilio">Domicilio  <span class="text-muted">(Opcional)</span>:</label>
+                        <input asp-for="Domicilio" class="form-control" />
+                        <span asp-validation-for="Domicilio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Genero">Seleccione su genero:</label>
+                        <select asp-for="Genero" class="form-select">
+                            <option value="">Seleccione un genero</option>
+                            <option value="0">Masculino</option>
+                            <option value="1">Femenino</option>
+                            <option value="2">No Especificado</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="PrivacidadCorreo" class="d-flex align-items-center gap-1 px-1 w-100">
+                            Seleccione la privacidad:   
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 data-bs-toggle="popover" data-bs-title="Privacidad de Correo" data-bs-content="Indica cuando el correo es visible para los usuarios de la plataforma"
+                                 width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94" />
+                            </svg>
+                        </label>
+                        <select asp-for="PrivacidadCorreo" class="form-select">
+                            <option value="">Seleccione una privacidad</option>
+                            <option value="0">Mostrar a todos</option>
+                            <option value="1">Ocultar a todos</option>
+                            <option value="2">Mostrar solo a los participantes del curso</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label asp-for="Descripcion" class="form-label">Descripción <span class="text-muted">(Opcional)</span>:</label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                </div>
+
+                @* Alert *@
+                @if (ViewBag.Mensaje != null)
+                {
+                    <div class="alert alert-warning my-2" role="alert">
+                        @ViewBag.Mensaje
+                    </div>
+                }
+
+                <div class="mb-3 d-grid gap-2">
+                    <button type="submit" class="btn btn-success mt-4">Actualizar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

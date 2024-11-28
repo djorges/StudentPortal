@@ -16,6 +16,7 @@ builder.Services.AddSingleton<EmailService>();
 builder.Services.AddSingleton<UtilService>();
 builder.Services.AddScoped<EmpleadoService>();
 builder.Services.AddScoped<PerfilService>();
+builder.Services.AddScoped<EstudianteService>();
 
 builder.Services.AddScoped<CursoService>();
 builder.Services.AddScoped<ProfesorService>();
