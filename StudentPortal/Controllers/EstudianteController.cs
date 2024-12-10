@@ -16,6 +16,9 @@ namespace StudentPortal.Controllers
         private readonly UtilService _utilService;
         private readonly EmailService _emailService;
         private readonly IWebHostEnvironment _env;
+        const string SessionUserId = "_UserId";
+        const string SessionUserName = "_UserName";
+        const string SessionUserToken = "_UserToken";
 
         public EstudianteController(EstudianteService estudianteService, UtilService utilService, EmailService emailService, IWebHostEnvironment env)
         {
@@ -45,6 +48,12 @@ namespace StudentPortal.Controllers
                     ViewBag.Mensaje = $"Se ha solicitado restablecer su cuenta, por favor revise su bandeja del correo {correo}";
                 }
                 else {
+                    if (usuario.Token != null) {
+                        //Crear sesion para el usuario logueado
+                        HttpContext.Session.SetInt32(SessionUserId, usuario.EstudianteId);
+                        HttpContext.Session.SetString(SessionUserToken, usuario.Token.ToString());
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -53,6 +62,14 @@ namespace StudentPortal.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -188,13 +205,13 @@ namespace StudentPortal.Controllers
         [HttpGet]
         public async Task<ActionResult> Perfil(int id) { 
             var estudiante = await _estudianteService.ObtenerPorIdAsync(id);
+            int? userId = HttpContext?.Session.GetInt32("_UserId");
             
-            if (estudiante == null) {
+            if (estudiante == null || userId == null ) {
                 return RedirectToAction("Index","Home");
             }
             
-            ViewBag.Id = id;
-
+            ViewBag.Id = userId;
             return View(estudiante);
         }
 
@@ -203,9 +220,13 @@ namespace StudentPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _estudianteService.ActualizarAsync(id, estudiante);
-
-                return RedirectToAction("Index", "Home");
+                var resultado = await _estudianteService.ActualizarAsync(id, estudiante);
+                if (resultado) {
+                    ViewBag.Mensaje = "Se actualizó los datos correctamente";
+                }
+                else {
+                    ViewBag.Mensaje = "Ocurrió un error al actualizar los datos.";
+                }
             }
             else {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MailKit;
 using Microsoft.EntityFrameworkCore;
 using StudentPortal.Data;
 using StudentPortal.Entities;
@@ -11,9 +12,11 @@ namespace StudentPortal.Services
         private readonly ILogger<EstudianteService> _logger;
         private readonly DBMain _dbMain;
         private readonly IMapper _mapper;
+        private readonly UtilService _utilService;
 
-        public EstudianteService(DBMain dbMain, IMapper mapper, ILogger<EstudianteService> logger)
+        public EstudianteService(UtilService utilService, DBMain dbMain, IMapper mapper, ILogger<EstudianteService> logger)
         {
+            _utilService = utilService;
             _dbMain = dbMain;
             _mapper = mapper;
             _logger = logger;
@@ -57,17 +60,25 @@ namespace StudentPortal.Services
 
             try
             {
+                var claveEncrypt = _utilService.ConvertirSHA256(clave);
                 var usuarioEntidad = await _dbMain.Estudiantes
-                    .Where(u => u.Correo == correo && u.Clave == clave)
+                    .Where(u => u.Correo == correo && u.Clave == claveEncrypt)
                     .FirstOrDefaultAsync();
 
                 if (usuarioEntidad != null)
                 {
+                    var token = _utilService.GenerarToken();
+                    usuarioEntidad.Token = token;
+                    await _dbMain.SaveChangesAsync();
+
                     usuario = new EstudianteDto
                     {
+                        EstudianteId = usuarioEntidad.EstudianteId,
+                        Username = usuarioEntidad.Username,
                         Nombre = usuarioEntidad.Nombre,
                         Restablecer = usuarioEntidad.Restablecer,
-                        Confirmado = usuarioEntidad.Confirmado
+                        Confirmado = usuarioEntidad.Confirmado,
+                        Token = token
                     };
                 }
             }

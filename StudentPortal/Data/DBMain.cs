@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
 using StudentPortal.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StudentPortal.Data
 {
@@ -19,7 +22,7 @@ namespace StudentPortal.Data
         public DbSet<Curso> Cursos { get; set; }
         public DbSet<Calificacion> Calificaciones { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
-        //public DbSet<CursoEstudiante> CursoEstudiantes { get; set; }
+        public DbSet<CursoEstudiante> CursoEstudiantes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,19 +58,32 @@ namespace StudentPortal.Data
                 tb.ToTable("estudiantes");
             });
 
-            /*modelBuilder.Entity<CursoEstudiante>()
-                .HasKey(ce => new { ce.EstudianteId, ce.CursoId });
+            modelBuilder.Entity<CursoEstudiante>(entity =>
+            {
+                entity.HasKey(ce => new { ce.EstudianteId, ce.CursoId });
+                entity.HasOne(ce => ce.Estudiante)
+                      .WithMany(e => e.CursosEstudiantes)
+                      .HasForeignKey(ce => ce.EstudianteId);
+                entity.HasOne(ce => ce.Curso)
+                      .WithMany(c => c.CursosEstudiantes)
+                      .HasForeignKey(ce => ce.CursoId);
+            });
 
-            modelBuilder.Entity<CursoEstudiante>()
-                .HasOne(ce => ce.Estudiante)
-                .WithMany(e => e.CursosEstudiantes)
-                .HasForeignKey(ce => ce.EstudianteId);
+            modelBuilder.Entity<ExamenEstudiante>(entity =>
+            {
+                entity.HasKey(ee => new { ee.ExamenId, ee.EstudianteId });
+                entity.HasOne(ee => ee.Examen)
+                    .WithMany(e => e.ExamenEstudiantes)
+                    .HasForeignKey(ee => ee.ExamenId);
+                entity.HasOne(ee => ee.Estudiante)
+                    .WithMany(e => e.ExamenEstudiantes)
+                    .HasForeignKey(ee => ee.EstudianteId);
+            });
 
-            modelBuilder.Entity<CursoEstudiante>()
-                .HasOne(ce => ce.Curso)
-                .WithMany(c => c.CursosEstudiantes)
-                .HasForeignKey(ce => ce.CursoId);
-            */
+            modelBuilder.Entity<FechaExamen>()
+               .HasOne(fe => fe.Examen)
+               .WithMany(e => e.FechasDisponibles)
+               .HasForeignKey(fe => fe.ExamenId);
 
             modelBuilder.Entity<Profesor>(tb =>
             {
@@ -197,7 +213,7 @@ namespace StudentPortal.Data
                          CalificacionId = 2,
                          ProfesorId = 1,
                      },
-                      new Curso
+                     new Curso
                       {
                           CursoId = 3,
                           Nombre = "Química II",
@@ -217,6 +233,97 @@ namespace StudentPortal.Data
                 );
                 tb.ToTable("cursos");
             });
+
+            modelBuilder.Entity<Examen>(tb =>
+            {
+                tb.HasKey(col => col.ExamenId);
+                tb.Property(col => col.ExamenId).ValueGeneratedOnAdd();
+                tb.Property(col => col.Titulo).IsRequired().HasMaxLength(50);
+                tb.Property(col => col.NotasProfesor)
+                    .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                tb.HasData(
+                    new Examen
+                    {
+                        ExamenId = 1,
+                        Titulo = "Integrador Fisica III",
+                        PeriodoLectivo = "Agosto 2024",
+                        Sede = "Flores",
+                        Aula = 201,
+                        CantInscriptos = 30,
+                        MaxInscriptos = 30,
+                        DuracionHoras = 2,
+                        NotasProfesor = [
+                            "Haber aprobado los dos parciales",
+                            "Todos los TPs Aprobados",
+                            "75% de asistencia a las clases"
+                        ],
+                        ProfesorId = 1,
+                    },
+                    new Examen
+                    {
+                        ExamenId = 2,
+                        Titulo = "Integrador Matemáticas Avanzadas II",
+                        PeriodoLectivo = "Noviembre 2024",
+                        Sede = "Caballito",
+                        Aula = 102,
+                        CantInscriptos = 15,
+                        MaxInscriptos = 25,
+                        DuracionHoras = 3,
+                        NotasProfesor = [
+                            "TP final obligatorio aprobado",
+                            "Participación en al menos 50% de las clases prácticas"
+                        ],
+                        ProfesorId = 2,
+                    },
+                    new Examen
+                    {
+                        ExamenId = 3,
+                        Titulo = "Integrador Programación III",
+                        PeriodoLectivo = "Diciembre 2024",
+                        Sede = "Belgrano",
+                        Aula = 305,
+                        CantInscriptos = 20,
+                        MaxInscriptos = 30,
+                        DuracionHoras = 4,
+                        NotasProfesor = [
+                            "Haber entregado y aprobado el proyecto integrador",
+                            "Participación en la evaluación grupal previa"
+                        ],
+                        ProfesorId = 3,
+                    },
+                    new Examen
+                    {
+                        ExamenId = 4,
+                        Titulo = "Integrador Química III",
+                        PeriodoLectivo = "Enero 2025",
+                        Sede = "Microcentro",
+                        Aula = 101,
+                        CantInscriptos = 10,
+                        MaxInscriptos = 20,
+                        DuracionHoras = 2,
+                        NotasProfesor = [
+                            "Obligatorio completar el ensayo final",
+                            "Revisión aprobada de las lecturas asignadas"
+                        ],
+                        ProfesorId = 1,
+                    }
+                );
+                tb.ToTable("examenes");
+            });
+
+            modelBuilder.Entity<FechaExamen>().HasData(
+                new FechaExamen { FechaExamenId = 1, ExamenId = 1, Fecha = new DateTime(2024, 12, 20, 12, 30, 00) },
+                new FechaExamen { FechaExamenId = 2, ExamenId = 1, Fecha = new DateTime(2025, 01, 10, 11, 30, 00) },
+                new FechaExamen { FechaExamenId = 3, ExamenId = 1, Fecha = new DateTime(2025, 02, 10, 09, 30, 00) },
+                new FechaExamen { FechaExamenId = 4, ExamenId = 2, Fecha = new DateTime(2024, 11, 30, 10, 00, 00) },
+                new FechaExamen { FechaExamenId = 5, ExamenId = 2, Fecha = new DateTime(2024, 12, 07, 14, 00, 00) },
+                new FechaExamen { FechaExamenId = 6, ExamenId = 3, Fecha = new DateTime(2024, 12, 15, 09, 00, 00) },
+                new FechaExamen { FechaExamenId = 7, ExamenId = 3, Fecha = new DateTime(2024, 12, 22, 13, 30, 00) },
+                new FechaExamen { FechaExamenId = 8, ExamenId = 4, Fecha = new DateTime(2025, 01, 15, 11, 00, 00) },
+                new FechaExamen { FechaExamenId = 9, ExamenId = 4, Fecha = new DateTime(2025, 01, 20, 14, 00, 00) }
+            );
         }
     }
 }

@@ -17,13 +17,28 @@ builder.Services.AddSingleton<UtilService>();
 builder.Services.AddScoped<EmpleadoService>();
 builder.Services.AddScoped<PerfilService>();
 builder.Services.AddScoped<EstudianteService>();
-
+builder.Services.AddScoped<ExamenService>();
 builder.Services.AddScoped<CursoService>();
 builder.Services.AddScoped<ProfesorService>();
-builder.Services.AddScoped<DBUsuario>();
+
+//Configuring Session Services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.IOTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.Name = ".StudentPortal.Session";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Path = "/";
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+//
 builder.Services.AddDbContext<DBMain>(options =>
     options.UseMySQL(connectionString)
 );
+//
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo{
@@ -45,7 +60,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -63,6 +77,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /HELP.md
 /StudentPortal/Migrations/20241118030057_CreateCursosTable.cs
+/StudentPortal/Utils

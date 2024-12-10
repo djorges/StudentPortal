@@ -82,7 +82,7 @@
             <div class="row mb-3 mb-sm-0">
                  @foreach (var curso in Model.Elementos)
                 {
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 mb-3">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">@curso.Nombre  <span class="badge bg-secondary text-bg-primary">@curso.Codigo</span></h5>
@@ -113,7 +113,7 @@
                                 @{
                                     var porcentaje = (int)Math.Round((double)curso.CantInscriptos / curso.MaxInscriptos * 100);
                                 }
-                                <div class="progress mb-2 w-100">
+                                <div class="progress mb-3 w-100">
                                     <div class="progress-bar bg-success"
                                          role="progressbar"
                                          style="width: @porcentaje%;"
@@ -123,21 +123,17 @@
                                         Inscriptos @curso.CantInscriptos/@curso.MaxInscriptos
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <a class="btn btn-dark text-white me-2"
-                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Desinscribir">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon" viewBox="0 0 16 16">
-                                            <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1z" />
-                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                                        </svg>
-                                    </a>
-                                    <a class="btn btn-success" 
+                                @*Opciones*@
+                                <form method="post" class="d-flex justify-content-end" asp-action="Inscribir" asp-controller="Curso">
+                                    <input name="cursoId" value="@curso.CursoId" hidden/>
+                                    <button class="btn btn-success" type="submit"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Inscribir">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
                                             <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z" />
                                         </svg>
-                                    </a>
-                                </div>
+                                        Inscribir
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -145,7 +141,7 @@
             </div>
             <br />
             @*Pagination*@
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between mb-3">
                 <div class="text-muted">
                     Total: @Model.TotalElementos Cursos
                 </div>

@@ -21,6 +21,6 @@
         public int ProfesorId { get; set; } 
         public Profesor Profesor { get; set; }
 
-        //public List<CursoEstudiante> CursosEstudiantes { get; set; } = new List<CursoEstudiante>();
+        public List<CursoEstudiante> CursosEstudiantes { get; set; } = new List<CursoEstudiante>();
     }
 }

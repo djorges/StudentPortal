@@ -21,7 +21,7 @@ namespace StudentPortal.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["TopProfesores"] = await _profesorService.GetTopRated();
-            ViewData["TopCursos"] = await _cursoService.GetTopRated();
+            ViewData["TopCursos"] = await _cursoService.ObtenerCursosMejorPuntuadosAsync();
 
             return View();
         }

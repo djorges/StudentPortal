@@ -29,6 +29,7 @@ namespace StudentPortal.Entities
         public bool Confirmado { get; set; }
         public string Token { get; set; }
 
-        //public List<CursoEstudiante> CursosEstudiantes { get; set; } = new List<CursoEstudiante>();
+        public List<CursoEstudiante> CursosEstudiantes { get; set; } = new List<CursoEstudiante>();
+        public List<ExamenEstudiante> ExamenEstudiantes { get; set; } = new List<ExamenEstudiante>();
     }
 }

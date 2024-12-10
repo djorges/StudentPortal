@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentPortal.Data;
 
@@ -10,9 +11,11 @@ using StudentPortal.Data;
 namespace StudentPortal.Migrations
 {
     [DbContext(typeof(DBMain))]
-    partial class DBMainModelSnapshot : ModelSnapshot
+    [Migration("20241128234516_AddCursoEstudianteRel")]
+    partial class AddCursoEstudianteRel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,200 +300,6 @@ namespace StudentPortal.Migrations
                     b.ToTable("estudiantes", (string)null);
                 });
 
-            modelBuilder.Entity("StudentPortal.Entities.Examen", b =>
-                {
-                    b.Property<int>("ExamenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<short>("Aula")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("CantInscriptos")
-                        .HasColumnType("int");
-
-                    b.Property<short>("DuracionHoras")
-                        .HasColumnType("smallint");
-
-                    b.Property<DateTime?>("FechaSeleccionada")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("MaxInscriptos")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NotasProfesor")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PeriodoLectivo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("ProfesorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Sede")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("ExamenId");
-
-                    b.HasIndex("ProfesorId");
-
-                    b.ToTable("examenes", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ExamenId = 1,
-                            Aula = (short)201,
-                            CantInscriptos = 30,
-                            DuracionHoras = (short)2,
-                            MaxInscriptos = 30,
-                            NotasProfesor = "Haber aprobado los dos parciales,Todos los TPs Aprobados,75% de asistencia a las clases",
-                            PeriodoLectivo = "Agosto 2024",
-                            ProfesorId = 1,
-                            Sede = "Flores",
-                            Titulo = "Integrador Fisica III"
-                        },
-                        new
-                        {
-                            ExamenId = 2,
-                            Aula = (short)102,
-                            CantInscriptos = 15,
-                            DuracionHoras = (short)3,
-                            MaxInscriptos = 25,
-                            NotasProfesor = "TP final obligatorio aprobado,Participación en al menos 50% de las clases prácticas",
-                            PeriodoLectivo = "Noviembre 2024",
-                            ProfesorId = 2,
-                            Sede = "Caballito",
-                            Titulo = "Integrador Matemáticas Avanzadas II"
-                        },
-                        new
-                        {
-                            ExamenId = 3,
-                            Aula = (short)305,
-                            CantInscriptos = 20,
-                            DuracionHoras = (short)4,
-                            MaxInscriptos = 30,
-                            NotasProfesor = "Haber entregado y aprobado el proyecto integrador,Participación en la evaluación grupal previa",
-                            PeriodoLectivo = "Diciembre 2024",
-                            ProfesorId = 3,
-                            Sede = "Belgrano",
-                            Titulo = "Integrador Programación III"
-                        },
-                        new
-                        {
-                            ExamenId = 4,
-                            Aula = (short)101,
-                            CantInscriptos = 10,
-                            DuracionHoras = (short)2,
-                            MaxInscriptos = 20,
-                            NotasProfesor = "Obligatorio completar el ensayo final,Revisión aprobada de las lecturas asignadas",
-                            PeriodoLectivo = "Enero 2025",
-                            ProfesorId = 1,
-                            Sede = "Microcentro",
-                            Titulo = "Integrador Química III"
-                        });
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.ExamenEstudiante", b =>
-                {
-                    b.Property<int>("ExamenId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EstudianteId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaInscripcion")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("ExamenId", "EstudianteId");
-
-                    b.HasIndex("EstudianteId");
-
-                    b.ToTable("ExamenEstudiante");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.FechaExamen", b =>
-                {
-                    b.Property<int>("FechaExamenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExamenId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("FechaExamenId");
-
-                    b.HasIndex("ExamenId");
-
-                    b.ToTable("FechaExamen");
-
-                    b.HasData(
-                        new
-                        {
-                            FechaExamenId = 1,
-                            ExamenId = 1,
-                            Fecha = new DateTime(2024, 12, 20, 12, 30, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 2,
-                            ExamenId = 1,
-                            Fecha = new DateTime(2025, 1, 10, 11, 30, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 3,
-                            ExamenId = 1,
-                            Fecha = new DateTime(2025, 2, 10, 9, 30, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 4,
-                            ExamenId = 2,
-                            Fecha = new DateTime(2024, 11, 30, 10, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 5,
-                            ExamenId = 2,
-                            Fecha = new DateTime(2024, 12, 7, 14, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 6,
-                            ExamenId = 3,
-                            Fecha = new DateTime(2024, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 7,
-                            ExamenId = 3,
-                            Fecha = new DateTime(2024, 12, 22, 13, 30, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 8,
-                            ExamenId = 4,
-                            Fecha = new DateTime(2025, 1, 15, 11, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            FechaExamenId = 9,
-                            ExamenId = 4,
-                            Fecha = new DateTime(2025, 1, 20, 14, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
-                });
-
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>
                 {
                     b.Property<int>("Id")
@@ -687,47 +496,6 @@ namespace StudentPortal.Migrations
                     b.Navigation("Perfil");
                 });
 
-            modelBuilder.Entity("StudentPortal.Entities.Examen", b =>
-                {
-                    b.HasOne("StudentPortal.Entities.Profesor", "Profesor")
-                        .WithMany()
-                        .HasForeignKey("ProfesorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Profesor");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.ExamenEstudiante", b =>
-                {
-                    b.HasOne("StudentPortal.Entities.Estudiante", "Estudiante")
-                        .WithMany("ExamenEstudiantes")
-                        .HasForeignKey("EstudianteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentPortal.Entities.Examen", "Examen")
-                        .WithMany("ExamenEstudiantes")
-                        .HasForeignKey("ExamenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Estudiante");
-
-                    b.Navigation("Examen");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.FechaExamen", b =>
-                {
-                    b.HasOne("StudentPortal.Entities.Examen", "Examen")
-                        .WithMany("FechasDisponibles")
-                        .HasForeignKey("ExamenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Examen");
-                });
-
             modelBuilder.Entity("StudentPortal.Entities.Calificacion", b =>
                 {
                     b.Navigation("Curso")
@@ -742,15 +510,6 @@ namespace StudentPortal.Migrations
             modelBuilder.Entity("StudentPortal.Entities.Estudiante", b =>
                 {
                     b.Navigation("CursosEstudiantes");
-
-                    b.Navigation("ExamenEstudiantes");
-                });
-
-            modelBuilder.Entity("StudentPortal.Entities.Examen", b =>
-                {
-                    b.Navigation("ExamenEstudiantes");
-
-                    b.Navigation("FechasDisponibles");
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Perfil", b =>
