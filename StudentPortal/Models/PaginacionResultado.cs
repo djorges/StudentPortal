@@ -6,6 +6,6 @@
         public int PaginaActual { get; set; }
         public int TotalPaginas { get; set; }
         public int TotalElementos { get; set; }
-        public FiltrosDto Filtros { get; set; }
+        public Dictionary<string, object?> Filtros { get; set; } = new();
     }
 }

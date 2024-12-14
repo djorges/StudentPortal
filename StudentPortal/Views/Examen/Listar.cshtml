@@ -1,10 +1,124 @@
-﻿@*
-    Duracion, Notas del Profesor.
-*@
+﻿@using StudentPortal.Entities
+@using System.Text
+@model PaginacionResultado<Examen>
 @{
-    ViewData["Title"] = "Examenes";
+    ViewData["Title"] = "Exámenes";
+
+    var cssBuilder = new StringBuilder();
+    foreach (var examen in Model.Elementos){
+        var porcentaje = (int)Math.Round((double)examen.CantInscriptos / examen.MaxInscriptos * 100);
+        double angulo = porcentaje * 1.8;
+        
+        cssBuilder.AppendLine($@"
+            @keyframes dynamic-loading-{examen.ExamenId} {{
+                0% {{
+                    transform: rotate(0deg);
+                }}
+                100% {{
+                    transform: rotate({angulo}deg);
+                }}
+            }}
+
+            .progress-{examen.ExamenId} .progress-bar {{
+                border-color: #049dff;
+            }}
+
+            .progress-{examen.ExamenId} .progress-right .progress-bar {{                          
+                animation: dynamic-loading-{examen.ExamenId} 1.8s linear forwards;
+            }}
+
+            .progress-{examen.ExamenId} .progress-left .progress-bar {{
+                animation: none;
+            }}
+        ");
+    }
 }
-<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<style>
+    .progress {
+    width: 150px;
+    height: 150px !important;
+    float: left;
+    line-height: 150px;
+    background: none;
+    margin: 20px;
+    box-shadow: none;
+    position: relative;
+    }
+
+    .progress:after {
+        content: "";
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 12px solid #fff;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .progress > span {
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        z-index: 1;
+    }
+
+    .progress .progress-left {
+        left: 0;
+    }
+
+    .progress .progress-bar {
+        width: 100%;
+        height: 100%;
+        background: none;
+        border-width: 12px;
+        border-style: solid;
+        position: absolute;
+        top: 0;
+    }
+
+    .progress .progress-left .progress-bar {
+        left: 100%;
+        border-top-right-radius: 80px;
+        border-bottom-right-radius: 80px;
+        border-left: 0;
+        -webkit-transform-origin: center left;
+        transform-origin: center left;
+    }
+
+    .progress .progress-right {
+        right: 0;
+    }
+
+    .progress .progress-right .progress-bar {
+        left: -100%;
+        border-top-left-radius: 80px;
+        border-bottom-left-radius: 80px;
+        border-right: 0;
+        -webkit-transform-origin: center right;
+        transform-origin: center right;
+        animation: loading-1 1.8s linear forwards;
+    }
+
+    .progress .progress-value {
+        width: 90%;
+        height: 90%;
+        border-radius: 50%;
+        background: #fff;
+        font-size: 24px;
+        color: #0000009e;
+        line-height: 135px;
+        text-align: center;
+        position: absolute;
+        top: 5%;
+        left: 5%;
+    }
+
+    @Html.Raw(cssBuilder.ToString())
+</style>
+
 <div class="container">
     <div class="row mt-3">
         <div class="col-3">
@@ -12,14 +126,14 @@
         </div>
         <div class="col-9">
             <div class="row align-items-center mb-2">
-                <h3>Listado de Examenes</h3>
+                <h3>Listado de Exámenes</h3>
             </div>
             @*Controls: Search, Filters, Order*@
             <div class="row my-3">
                 <div class="col-6">
-                    <form id="form-search" class="d-flex" role="search" method="post" asp-action="Buscar" asp-controller="Examen">
-                        <input class="form-control me-2" type="search" placeholder="Buscar Curso" aria-label="Search">
-                        <button class="btn btn-outline-success align-items-center" type="submit">
+                    <form id="form-search" class="d-flex" role="search" method="get" asp-action="Buscar" asp-controller="Examen">
+                        <input class="form-control me-2" type="search" name="busquedaNombre" placeholder="Buscar Exámen" aria-label="Search">
+                        <button class="btn btn-outline-info align-items-center" type="submit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                             </svg>
@@ -36,80 +150,137 @@
                 </div>
             </div>
             <div class="collapse card card-body mb-2" id="form-filters">
-                <form role="search" method="post" asp-action="Listar" asp-controller="Examen">
-                    
-                    <button class="btn btn-outline-success" type="submit">Aplicar</button>
+                <form role="search" method="get" asp-action="Listar" asp-controller="Examen">
+                    <div class="mb-2">
+                        <label for="selectSede">Sede: </label>
+                        <select class="form-select" id="selectSede" aria-label="Selecciona sede" name="sede">
+                            <option value="" selected>Seleccione una sede</option>
+                            <option value="Almagro">Almagro</option>
+                            <option value="Monserrat">Monserrat</option>
+                            <option value="Palermo">Palermo</option>
+                            <option value="Flores">Flores</option>
+                            <option value="Puerto Madero">Puerto Madero</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="selectPeriodo">Periodo: </label>
+                        <select class="form-select" id="selectPeriodo" aria-label="Selecciona periodo" name="periodo">
+                            <option value="" selected>Seleccione un periodo</option>
+                            <option value="Agosto 2024">Agosto 2024</option>
+                            <option value="Diciembre 2024">Diciembre 2024</option>
+                            <option value="Enero 2025">Enero 2025</option>
+                            <option value="Agosto 2025">Agosto 2025</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="me-2">Duración(horas):</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="duracion" id="inlineCheckbox1" value="1">
+                            <label class="form-check-label" for="inlineCheckbox1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="duracion" id="inlineCheckbox2" value="2">
+                            <label class="form-check-label" for="inlineCheckbox2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="duracion" id="inlineCheckbox3" value="3">
+                            <label class="form-check-label" for="inlineCheckbox3">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="duracion" id="inlineCheckbox4" value="4">
+                            <label class="form-check-label" for="inlineCheckbox4">4</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-info" type="submit">Aplicar</button>
+                    </div>
                 </form>
             </div>
             @*List*@
-            <div class="row">
-                <div class="mb-3">
+            @foreach (var examen in Model.Elementos)
+            {
+                <div class="row mb-3">
                     <div class="card p-3">
-                        <h5 class="card-title">Integrador Fisica III <span class="badge bg-secondary text-bg-primary">Agosto 2024</span></h5>
+                        <h5 class="card-title">
+                            @examen.Titulo
+                            <span class="ms-2 badge bg-secondary text-bg-primary">@examen.PeriodoLectivo</span>
+                        </h5>
                         <div class="row">
                             <div class="col-6">
-                                <p class="card-text">
+                                <p class="card-text mt-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                                         <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
                                     </svg>
-                                    Sede: Almagro
+                                    Sede: @examen.Sede
                                 </p>
                                 <p class="card-text">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-vcard-fill" viewBox="0 0 16 16">
                                         <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1 1 0 0 0 2 13h6.96q.04-.245.04-.5M7 6a2 2 0 1 0-4 0 2 2 0 0 0 4 0" />
                                     </svg>
-                                    Profesor: Marcos Oliva
+                                    Profesor: @examen.Profesor.Nombre @examen.Profesor.Apellido
                                 </p>
                                 <p class="card-text">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-building-fill" viewBox="0 0 16 16">
                                         <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5M4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" />
                                     </svg>
-                                    Aula: 201
+                                    Aula: @examen.Aula
                                 </p>
                                 <p class="card-text">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
                                         <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5z" />
                                         <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
                                     </svg>
-                                    Duración(horas): 2
-                                </p>
-                                <p class="card-text">
-                                    <svg data-bs-toggle="popover"
-                                         data-bs-title="Notas del Profesor"
-                                         data-bs-content="Haber aprobado los dos parciales. Todos los TPs Aprobados. 75% de asistencia a las clases"
-                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-building-fill" viewBox="0 0 16 16">
-                                        <path d="M3 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h3v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V16h3a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1zm1 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5M4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5" />
-                                    </svg>
-                                    Notas:
-                                </p>
-                                <p class="card-text">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
-                                        <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                                    </svg>
-                                    Fechas Disponibles:
-                                    <select class="form-select" id="fechaSeleccionada" name="fechaSeleccionada" required>
-                                        <option value="">Selecciona una fecha</option>
-                                        <option value="2024-11-30">30 de Noviembre, 2024</option>
-                                        <option value="2024-12-05">5 de Diciembre, 2024</option>
-                                    </select>
+                                    Duración(horas): @examen.DuracionHoras
                                 </p>
                             </div>
+                            @*Progress *@
+                            @{
+                                var porcentaje = (int)Math.Round((double)examen.CantInscriptos / examen.MaxInscriptos * 100);
+                            }
                             <div class="col-6 d-flex justify-content-end">
-                                <div class="progress blue">
+                                <div class="progress progress-@examen.ExamenId">
                                     <span class="progress-left">
                                         <span class="progress-bar"></span>
                                     </span>
                                     <span class="progress-right">
                                         <span class="progress-bar"></span>
                                     </span>
-                                    <div class="progress-value">90%</div>
+                                    <div class="progress-value">@porcentaje%</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end">
-                            <form method="post" class="d-flex justify-content-end" asp-action="Inscribir" asp-controller="Examen">
-                                @*<input name="cursoId" value="@examen.CursoId" hidden />*@
+                        @*Controls*@
+                        <form method="post" class="row align-items-center" asp-action="Inscribir" asp-controller="Examen">
+                            <input name="cursoId" value="@examen.ExamenId" hidden />
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <label>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                        <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    </svg>
+                                </label>
+                                <select class="form-select" id="fechaSeleccionada" name="fechaSeleccionada" required style="max-width:200px">
+                                    <option value="">Selecciona una fecha</option>
+                                    @for (int i = 0; i < examen.FechasDisponibles.Count; i++)
+                                    {
+                                        <option value="i">@examen.FechasDisponibles[i].Fecha.ToString("dd/MM/yyyy HH:mm")</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-6 d-flex justify-content-end">
+                                @if (examen.NotasProfesor?.Length > 0)
+                                {
+                                    <button type="button" class="btn btn-secondary me-1"
+                                            data-bs-toggle="popover"
+                                            data-bs-placement="bottom"
+                                            data-bs-title="Notas del Profesor"
+                                            data-bs-content="@string.Join(". ", examen.NotasProfesor)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sticky-fill" viewBox="0 0 16 16">
+                                            <path d="M2.5 1A1.5 1.5 0 0 0 1 2.5v11A1.5 1.5 0 0 0 2.5 15h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 15 8.586V2.5A1.5 1.5 0 0 0 13.5 1zm6 8.5a1 1 0 0 1 1-1h4.396a.25.25 0 0 1 .177.427l-5.146 5.146a.25.25 0 0 1-.427-.177z" />
+                                        </svg>
+                                        Notas
+                                    </button>
+                                }
                                 <button class="btn btn-info" type="submit"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Inscribir">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
@@ -117,10 +288,73 @@
                                     </svg>
                                     Inscribir
                                 </button>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            }
+            <br />
+            @*Pagination*@
+            <div class="d-flex justify-content-between mb-3">
+                <div class="text-muted">
+                    Total: @Model.TotalElementos Exámenes
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link text-info"
+                               asp-action="Listar" asp-controller="Examen"
+                               asp-route-pagina="@(Model.PaginaActual - 1)"
+                               asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                               asp-route-sede="@Model.Filtros["Sede"]"
+                               asp-route-periodo="@Model.Filtros["Periodo"]"
+                               asp-route-duracion="@Model.Filtros["Duracion"]" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        @for(int i = 1; i<= Model.TotalPaginas; i++)
+                        {
+                            if ( i == Model.PaginaActual)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link bg-info text-white" 
+                                       asp-action="Listar" asp-controller="Examen" 
+                                       asp-route-pagina="@i"
+                                       asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                                       asp-route-sede="@Model.Filtros["Sede"]"
+                                       asp-route-periodo="@Model.Filtros["Periodo"]" 
+                                       asp-route-duracion="@Model.Filtros["Duracion"]">
+                                        @i
+                                    </a>
+                                </li>
+                            }else
+                            {
+                                <li class="page-item">
+                                    <a class="page-link text-info"
+                                       asp-action="Listar" asp-controller="Examen"
+                                       asp-route-pagina="@i"
+                                       asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                                       asp-route-sede="@Model.Filtros["Sede"]"
+                                       asp-route-periodo="@Model.Filtros["Periodo"]"
+                                       asp-route-duracion="@Model.Filtros["Duracion"]">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+                        }
+                        <li class="page-item">
+                            <a class="page-link text-info"
+                               asp-action="Listar" asp-controller="Examen"
+                               asp-route-pagina="@(Model.PaginaActual + 1)"
+                               asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                               asp-route-sede="@Model.Filtros["Sede"]"
+                               asp-route-periodo="@Model.Filtros["Periodo"]"
+                               asp-route-duracion="@Model.Filtros["Duracion"]" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

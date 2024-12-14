@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StudentPortal.Data;
@@ -32,12 +33,14 @@ namespace StudentPortal.Services
         ){
             var query = _dbMain.Cursos.AsQueryable();
 
+            //Apply filters
             if (!string.IsNullOrEmpty(sede)) query = query.Where(c => c.Sede == sede);
             if (creditos.HasValue) query = query.Where(c => c.Creditos == creditos);
             if (!string.IsNullOrEmpty(busquedaNombre)) query = query.Where(c => c.Descripcion.Contains(busquedaNombre));
             if (!string.IsNullOrEmpty(duracion)) query = query.Where(c => c.Duracion == duracion);
             if (obligatorio.HasValue) query = query.Where(c => c.EsObligatorio == obligatorio.Value);
 
+            //Create response
             var totalElementos = await query.CountAsync();
             var cursos = await query
                 .Include(c => c.Profesor)
@@ -51,12 +54,13 @@ namespace StudentPortal.Services
                 PaginaActual = pagina,
                 TotalPaginas = (int)Math.Ceiling((double)totalElementos / cantidadPorPagina),
                 TotalElementos = totalElementos,
-                Filtros = new FiltrosDto() { 
-                    BusquedaNombre = busquedaNombre,
-                    Sede = sede,
-                    Creditos = creditos,
-                    Obligatorio = obligatorio,
-                    Duracion = duracion
+                Filtros = new Dictionary<string, object?>
+                {
+                    { "BusquedaNombre", busquedaNombre != null ? Uri.EscapeDataString(busquedaNombre) : null },
+                    { "Sede", sede != null ? Uri.EscapeDataString(sede) : null },
+                    { "Creditos", creditos },
+                    { "Obligatorio", obligatorio },
+                    { "Duracion", duracion != null ? Uri.EscapeDataString(duracion) : null }
                 }
             };
         }

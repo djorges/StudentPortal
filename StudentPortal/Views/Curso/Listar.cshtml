@@ -75,7 +75,9 @@
                             <label class="form-check-label" for="inlineCheckbox3">Si</label>
                         </div>
                     </div>
-                    <button class="btn btn-outline-success" type="submit">Aplicar</button>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-success" type="submit">Aplicar</button>
+                    </div>
                 </form>
             </div>
             @*List*@
@@ -151,11 +153,11 @@
                             <a class="page-link text-success"
                                asp-action="Listar" asp-controller="Curso"
                                asp-route-pagina="@(Model.PaginaActual - 1)"
-                               asp-route-busquedaNombre="@Model.Filtros.BusquedaNombre"
-                               asp-route-sede="@Model.Filtros.Sede"
-                               asp-route-creditos="@Model.Filtros.Creditos"
-                               asp-route-obligatorio="@Model.Filtros.Obligatorio"
-                               asp-route-duracion="@Model.Filtros.Duracion" aria-label="Previous">
+                               asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                               asp-route-sede="@Model.Filtros["Sede"]"
+                               asp-route-creditos="@Model.Filtros["Creditos"]"
+                               asp-route-obligatorio="@Model.Filtros["Obligatorio"]"
+                               asp-route-duracion="@Model.Filtros["Duracion"]" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -166,12 +168,12 @@
                                 <li class="page-item">
                                     <a class="page-link bg-success text-white" 
                                         asp-action="Listar" asp-controller="Curso" 
-                                        asp-route-pagina="@i" 
-                                        asp-route-busquedaNombre="@Model.Filtros.BusquedaNombre"
-                                        asp-route-sede="@Model.Filtros.Sede"
-                                        asp-route-creditos="@Model.Filtros.Creditos"
-                                        asp-route-obligatorio="@Model.Filtros.Obligatorio"
-                                        asp-route-duracion="@Model.Filtros.Duracion">
+                                        asp-route-pagina="@i"
+                                       asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                                       asp-route-sede="@Model.Filtros["Sede"]"
+                                       asp-route-creditos="@Model.Filtros["Creditos"]"
+                                       asp-route-obligatorio="@Model.Filtros["Obligatorio"]"
+                                       asp-route-duracion="@Model.Filtros["Duracion"]">
                                         @i
                                     </a>
                                 </li>
@@ -181,11 +183,11 @@
                                     <a class="page-link text-success"
                                        asp-action="Listar" asp-controller="Curso"
                                        asp-route-pagina="@i"
-                                       asp-route-busquedaNombre="@Model.Filtros.BusquedaNombre"
-                                       asp-route-sede="@Model.Filtros.Sede"
-                                       asp-route-creditos="@Model.Filtros.Creditos"
-                                       asp-route-obligatorio="@Model.Filtros.Obligatorio"
-                                       asp-route-duracion="@Model.Filtros.Duracion">
+                                       asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                                       asp-route-sede="@Model.Filtros["Sede"]"
+                                       asp-route-creditos="@Model.Filtros["Creditos"]"
+                                       asp-route-obligatorio="@Model.Filtros["Obligatorio"]"
+                                       asp-route-duracion="@Model.Filtros["Duracion"]">
                                        @i
                                     </a>
                                 </li>
@@ -195,11 +197,11 @@
                             <a class="page-link text-success"
                                asp-action="Listar" asp-controller="Curso"
                                asp-route-pagina="@(Model.PaginaActual + 1)"
-                               asp-route-busquedaNombre="@Model.Filtros.BusquedaNombre"
-                               asp-route-sede="@Model.Filtros.Sede"
-                               asp-route-creditos="@Model.Filtros.Creditos"
-                               asp-route-obligatorio="@Model.Filtros.Obligatorio"
-                               asp-route-duracion="@Model.Filtros.Duracion" aria-label="Next">
+                               asp-route-busquedaNombre="@Model.Filtros["BusquedaNombre"]"
+                               asp-route-sede="@Model.Filtros["Sede"]"
+                               asp-route-creditos="@Model.Filtros["Creditos"]"
+                               asp-route-obligatorio="@Model.Filtros["Obligatorio"]"
+                               asp-route-duracion="@Model.Filtros["Duracion"]" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

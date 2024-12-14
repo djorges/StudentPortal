@@ -186,7 +186,7 @@ namespace StudentPortal.Migrations
 
                     b.HasIndex("CursoId");
 
-                    b.ToTable("CursoEstudiantes");
+                    b.ToTable("CursoEstudiantes", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.Empleado", b =>
@@ -413,7 +413,7 @@ namespace StudentPortal.Migrations
 
                     b.HasIndex("EstudianteId");
 
-                    b.ToTable("ExamenEstudiante");
+                    b.ToTable("ExamenEstudiante", (string)null);
                 });
 
             modelBuilder.Entity("StudentPortal.Entities.FechaExamen", b =>
@@ -432,7 +432,7 @@ namespace StudentPortal.Migrations
 
                     b.HasIndex("ExamenId");
 
-                    b.ToTable("FechaExamen");
+                    b.ToTable("FechaExamen", (string)null);
 
                     b.HasData(
                         new

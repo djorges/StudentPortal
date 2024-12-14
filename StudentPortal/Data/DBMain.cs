@@ -17,12 +17,14 @@ namespace StudentPortal.Data
         public DbSet<Empleado> Empleados { get; set; }
         public DbSet<Perfil> Perfiles { get; set; }
 
-        
+        public DbSet<Examen> Examenes { get; set; }
         public DbSet<Profesor> Profesores { get; set; }
         public DbSet<Curso> Cursos { get; set; }
         public DbSet<Calificacion> Calificaciones { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<CursoEstudiante> CursoEstudiantes { get; set; }
+        public DbSet<ExamenEstudiante> ExamenEstudiantes { get; set; }
+        public DbSet<FechaExamen> FechaExamen { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

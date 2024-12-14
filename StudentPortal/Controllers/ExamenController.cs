@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Mvc;
 using StudentPortal.Services;
 
 namespace StudentPortal.Controllers
@@ -17,20 +18,66 @@ namespace StudentPortal.Controllers
         [HttpGet]
         public async Task<IActionResult> Listar(
            string? busquedaNombre = null,
+           string? sede = null,
+           string? periodo = null,
+           int? duracion = null,
            int? pagina = 1
         )
         {
-            /*var resultado = await _examenService.ObtenerCursosPaginados(
+            var resultado = await _examenService.ObtenerExamenesPaginados(
                 pagina: pagina.Value,
-                busquedaNombre: busquedaNombre
-            );*/
-            return View();
+                busquedaNombre: busquedaNombre,
+                sede: sede,
+                periodo: periodo,
+                duracion: duracion
+            );
+            
+            return View(resultado);
+        }
+
+        [HttpGet("Examen/Estudiante/{estudianteId}")]
+        public async Task<IActionResult> ListarExamenPorEstudianteId(int estudianteId)
+        {
+
+            var examen = await _examenService.ObtenerExamenesPorEstudianteIdAsync(estudianteId);
+
+            if (examen == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.UserId = estudianteId;
+            return View("ExamenesPorEstudiante", examen);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Inscribir(int cursoId)
+        public async Task<IActionResult> Inscribir(int examenId, int fechaSeleccionada)
         {
-            return RedirectToAction("Listar");
+            var resultado = await _examenService.AsignarEstudianteAExamenAsync(examenId, fechaSeleccionada);
+            if (resultado == null)
+            {
+                ViewBag.Mensaje = "Error al inscribirse";
+                return RedirectToAction("Listar");
+            }
+
+            ViewBag.Mensaje = "Se inscribió correctamente";
+            return RedirectToAction("ListarExamenPorEstudianteId", new { estudianteId = resultado.EstudianteId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Desinscribir(int examenId, int estudianteId)
+        {
+
+            var resultado = await _examenService.DesasignarEstudianteDeExamenAsync(examenId, estudianteId);
+            if (!resultado)
+            {
+
+                ViewBag.Mensaje = "Error al desinscribirse";
+                return RedirectToAction("Listar");
+            }
+
+            ViewBag.Mensaje = "Se desinscribió correctamente";
+            return RedirectToAction("ListarExamenPorEstudianteId", new { estudianteId = estudianteId });
         }
     }
 }

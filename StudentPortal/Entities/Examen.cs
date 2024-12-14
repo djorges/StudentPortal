@@ -10,7 +10,7 @@
         public int CantInscriptos { get; set; }
         public int MaxInscriptos { get; set; }
 
-        public DateTime? FechaSeleccionada { get; set; }
+        public DateTime? FechaSeleccionada { get; set; } //TODO: delete
         public short DuracionHoras { get; set; }
         public string[]? NotasProfesor { get; set; }
 
